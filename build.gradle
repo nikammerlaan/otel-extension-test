@@ -1,0 +1,28 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.ryandens.javaagent-application" version "0.6.1"
+    id "com.ryandens.javaagent-otel-modification" version "0.6.1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    otel group: "io.opentelemetry.javaagent", name: "opentelemetry-javaagent", version: "1.11.1"
+    otelExtension group: "com.google.cloud.opentelemetry", name: "exporter-auto", version: "0.33.0-alpha", classifier: "shaded"
+}
+
+application {
+    mainClass = "Main"
+}
+
+run {
+    environment "OTEL_TRACES_EXPORTER", "google_cloud_trace"
+    environment "OTEL_JAVAAGENT_DEBUG", "true"
+}
+
+tasks.run.configure {
+    dependsOn(tasks.extendedAgent)
+}
